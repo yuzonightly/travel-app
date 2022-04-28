@@ -3,22 +3,25 @@ import { Checkbox, FormControlLabel } from "@mui/material";
 import { Framework } from "../models/framework";
 
 type handleCheckbox = (event: React.ChangeEvent<HTMLInputElement>) => void;
+type typeDictCheckbox = { [id: number]: boolean };
 
 export interface FrameworkListItemProps {
   framework: Framework;
   index: number;
   handleFrameworkCompletion: handleCheckbox;
+  checkboxRef: typeDictCheckbox;
 }
 
 const FrameworkListItem: React.FC<FrameworkListItemProps> = ({
   framework,
   index,
   handleFrameworkCompletion,
+  checkboxRef
 }) => {
   const [isChecked, setIsChecked] = useState(false);
 
   useEffect(() => {
-    setIsChecked(framework.completed);
+    setIsChecked(checkboxRef[framework.id]);
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

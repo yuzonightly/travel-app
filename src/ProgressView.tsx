@@ -1,18 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Framework } from "./models/framework";
 import FrameworksList from "./components/FrameworksList";
-import { LinearProgress, Box, Typography, Tab } from "@mui/material";
+import { LinearProgress, Box, Typography, Tab, checkboxClasses } from "@mui/material";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 
-type typeDict = { [name: string]: number };
+type typeDictCounter = { [name: string]: number };
+type typeDictCheckbox = { [id: number]: boolean };
 
 const ProgressView: React.FC = () => {
   const [frameworks, setFrameworks] = useState([] as Framework[]);
   const [completedCounter, setCompletedCounter] = useState(0);
-  const [categoryCounter, setCategoryCounter] = useState({} as typeDict);
+  const [categoryCounter, setCategoryCounter] = useState({} as typeDictCounter);
+  const checkboxRef = useRef({} as typeDictCheckbox);
   const [progressBar, setProgressBar] = useState(0);
+  // const [checkBoxes, setCheckBoxes] = useState({} as typeDictCheckbox);
   const categories = ["Frontend", "Backend", "Mobile"];
   const [tabValue, setTabValue] = React.useState("1");
 
@@ -69,6 +72,13 @@ const ProgressView: React.FC = () => {
 
   useEffect(() => {
     setFrameworks(data);
+    const dictCheckbox = {} as typeDictCheckbox;
+    data.forEach((f) => {
+      dictCheckbox[f.id] = f.completed;
+    });
+    // setCheckBoxes(dictCheckbox);
+    checkboxRef.current = dictCheckbox;
+    console.log(checkboxRef.current);
     const completedFrameworks = data.filter(({ completed }) => completed === true).length;
     setCompletedCounter(completedFrameworks);
   }, []);
@@ -90,15 +100,22 @@ const ProgressView: React.FC = () => {
       } else {
         catDict[f.category] = catDict[f.category] + offset;
       }
-      console.log(catDict);
     });
     setCategoryCounter(catDict);
   }, []);
 
-  // trash code, replace this
+  // useEffect(() => {
+  //   const dictCheckbox = {} as typeDictCheckbox;
+  //   frameworks.forEach((f) => {
+  //     dictCheckbox[f.id] = f.completed;
+  //   });
+  //   setCheckBoxes(dictCheckbox);
+  // }, [frameworks]);
+
   const handleFrameworkCompletion = (event: React.ChangeEvent<HTMLInputElement>) => {
     let category = "";
     const newFrameworks = [...frameworks];
+    const newCheckboxState = { ...checkboxRef.current };
     newFrameworks.map((f) => {
       if (f.name === event.target.name) {
         category = f.category;
@@ -106,9 +123,11 @@ const ProgressView: React.FC = () => {
           ...f,
           completed: event.target.checked,
         };
+        newCheckboxState[f.id] = event.target.checked;
         return newFw;
       }
     });
+    checkboxRef.current = newCheckboxState;
     setFrameworks(newFrameworks);
 
     let offset;
@@ -157,6 +176,7 @@ const ProgressView: React.FC = () => {
                     frameworks={frameworksFilter}
                     handleFrameworkCompletion={handleFrameworkCompletion}
                     categoryCounter={categoryCounter[category]}
+                    checkboxRef={checkboxRef.current}
                   />
                 );
               })}
@@ -164,10 +184,10 @@ const ProgressView: React.FC = () => {
           <TabPanel value="2">
             {frameworks && (
               <FrameworksList
-                key={1}
                 frameworks={frameworks}
                 handleFrameworkCompletion={handleFrameworkCompletion}
                 categoryCounter={completedCounter}
+                checkboxRef={checkboxRef.current}
               />
             )}
           </TabPanel>
