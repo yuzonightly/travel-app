@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Framework } from "./models/framework";
 import FrameworksList from "./components/FrameworksList";
-import { LinearProgress, Box, Typography } from "@mui/material";
+import { LinearProgress, Box, Typography, Tab } from "@mui/material";
+import TabContext from "@mui/lab/TabContext";
+import TabList from "@mui/lab/TabList";
+import TabPanel from "@mui/lab/TabPanel";
 
 type typeDict = { [name: string]: number };
 
@@ -11,6 +14,7 @@ const ProgressView: React.FC = () => {
   const [categoryCounter, setCategoryCounter] = useState({} as typeDict);
   const [progressBar, setProgressBar] = useState(0);
   const categories = ["Frontend", "Backend", "Mobile"];
+  const [tabValue, setTabValue] = React.useState("1");
 
   const data = [
     {
@@ -121,6 +125,10 @@ const ProgressView: React.FC = () => {
     });
   };
 
+  const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
+    setTabValue(newValue);
+  };
+
   return (
     <div>
       <Typography align="center" variant="h5">
@@ -129,18 +137,42 @@ const ProgressView: React.FC = () => {
       <Box sx={{ width: "100%" }}>
         <LinearProgress variant="determinate" value={progressBar} />
       </Box>
-      {frameworks &&
-        categories.map((category: string, index: number) => {
-          const frameworksFilter = frameworks.filter((f) => f.category === category);
-          return (
-            <FrameworksList
-              key={index}
-              frameworks={frameworksFilter}
-              handleFrameworkCompletion={handleFrameworkCompletion}
-              categoryCounter={categoryCounter[category]}
-            />
-          );
-        })}
+
+      <Box sx={{ width: "100%", typography: "body1" }}>
+        <TabContext value={tabValue}>
+          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+            <TabList onChange={handleTabChange} aria-label="frameworks">
+              <Tab label="by category" value="1" />
+              <Tab label="show all" value="2" />
+            </TabList>
+          </Box>
+
+          <TabPanel value="1">
+            {frameworks &&
+              categories.map((category: string, index: number) => {
+                const frameworksFilter = frameworks.filter((f) => f.category === category);
+                return (
+                  <FrameworksList
+                    key={index}
+                    frameworks={frameworksFilter}
+                    handleFrameworkCompletion={handleFrameworkCompletion}
+                    categoryCounter={categoryCounter[category]}
+                  />
+                );
+              })}
+          </TabPanel>
+          <TabPanel value="2">
+            {frameworks && (
+              <FrameworksList
+                key={1}
+                frameworks={frameworks}
+                handleFrameworkCompletion={handleFrameworkCompletion}
+                categoryCounter={completedCounter}
+              />
+            )}
+          </TabPanel>
+        </TabContext>
+      </Box>
     </div>
   );
 };
