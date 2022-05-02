@@ -8,3 +8,9 @@ npm install -D eslint-import-resolver-typescript @typescript-eslint/eslint-plugi
 npm init @eslint/config
 npm install -S react-router-dom
 ```
+
+```bash
+npm install express
+npm install -S nodemon
+npm install apollo-server graphql
+```

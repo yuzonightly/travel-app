@@ -1,0 +1,9 @@
+type Query {
+  listFramework: [Framework!]
+}
+type Framework {
+  id: ID!
+  name: String
+  category: String
+  completed: Boolean
+}

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Framework } from "./models/framework";
 import FrameworksList from "./components/FrameworksList";
-import { LinearProgress, Box, Typography, Tab, checkboxClasses } from "@mui/material";
+import { LinearProgress, Box, Typography, Tab } from "@mui/material";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
@@ -11,11 +11,10 @@ type typeDictCheckbox = { [id: number]: boolean };
 
 const ProgressView: React.FC = () => {
   const [frameworks, setFrameworks] = useState([] as Framework[]);
+  const checkboxRef = useRef({} as typeDictCheckbox);
   const [completedCounter, setCompletedCounter] = useState(0);
   const [categoryCounter, setCategoryCounter] = useState({} as typeDictCounter);
-  const checkboxRef = useRef({} as typeDictCheckbox);
   const [progressBar, setProgressBar] = useState(0);
-  // const [checkBoxes, setCheckBoxes] = useState({} as typeDictCheckbox);
   const categories = ["Frontend", "Backend", "Mobile"];
   const [tabValue, setTabValue] = React.useState("1");
 
@@ -76,7 +75,6 @@ const ProgressView: React.FC = () => {
     data.forEach((f) => {
       dictCheckbox[f.id] = f.completed;
     });
-    // setCheckBoxes(dictCheckbox);
     checkboxRef.current = dictCheckbox;
     console.log(checkboxRef.current);
     const completedFrameworks = data.filter(({ completed }) => completed === true).length;
@@ -104,14 +102,6 @@ const ProgressView: React.FC = () => {
     setCategoryCounter(catDict);
   }, []);
 
-  // useEffect(() => {
-  //   const dictCheckbox = {} as typeDictCheckbox;
-  //   frameworks.forEach((f) => {
-  //     dictCheckbox[f.id] = f.completed;
-  //   });
-  //   setCheckBoxes(dictCheckbox);
-  // }, [frameworks]);
-
   const handleFrameworkCompletion = (event: React.ChangeEvent<HTMLInputElement>) => {
     let category = "";
     const newFrameworks = [...frameworks];
@@ -130,12 +120,11 @@ const ProgressView: React.FC = () => {
     checkboxRef.current = newCheckboxState;
     setFrameworks(newFrameworks);
 
-    let offset;
+    let offset = -1;
     if (event.target.checked) {
       offset = 1;
-    } else {
-      offset = -1;
     }
+
     setCompletedCounter(completedCounter + offset);
 
     setCategoryCounter({

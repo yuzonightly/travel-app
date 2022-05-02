@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { FormControl, FormLabel, FormGroup } from "@mui/material";
 import { Framework } from "../models/framework";
 import FrameworkListItem from "./FrameworkListItem";
@@ -17,8 +17,8 @@ const FrameworksList: React.FC<FrameworksListProps> = ({
   frameworks,
   handleFrameworkCompletion,
   categoryCounter,
-  checkboxRef
-}) => {
+  checkboxRef,
+}) => { 
   return (
     <FormControl component="fieldset">
       <FormLabel component="legend">
